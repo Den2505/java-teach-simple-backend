@@ -1,6 +1,6 @@
 package net.thumbtack.school.introduction;
 
-import static java.lang.Math.pow;
+
 
 public class FirstSteps {
     public int sum (int x, int y){
@@ -29,8 +29,8 @@ public class FirstSteps {
         if (array.length==0){return 0;}
         else {
             int sum = 0;
-            for (int i = 0; i < array.length; i++) {
-                sum += array[i];
+            for (int i : array) {
+                sum += i;
             }
             return sum;
         }
@@ -39,8 +39,8 @@ public class FirstSteps {
         if (array.length==0){return 0;}
         else {
             int mul = 1;
-            for (int i = 0; i < array.length; i++) {
-                mul *= array[i];
+            for (int i : array) {
+                mul *= i;
             }
             return mul;
         }
@@ -49,9 +49,11 @@ public class FirstSteps {
         int min = Integer.MAX_VALUE;
         if(array.length==0){return min;}
         else {
-                for (int i = 0; i < array.length; i++) {
-if(min>array[i]){min=array[i];}
+            for (int i : array) {
+                if (min > i) {
+                    min = i;
                 }
+            }
        return min; }
     }
 
@@ -61,8 +63,10 @@ if(min>array[i]){min=array[i];}
         else {
 
 
-            for (int i = 0; i < array.length; i++) {
-                if(max<array[i]){max=array[i];}
+            for (int i : array) {
+                if (max < i) {
+                    max = i;
+                }
             }
 
             return max; }
@@ -70,14 +74,13 @@ if(min>array[i]){min=array[i];}
     public double average(int[] array){
         if(array.length==0){return 0;}
         double sum = 0;
-        for(int i=0;i<array.length;i++){
-            sum+=array[i];
+        for (int i : array) {
+            sum += i;
         }
         return sum/array.length;
     }
     public boolean isSortedDescendant(int[] array){
-        if(array.length==0){return true;}
-        if(array.length==1){return true;}
+        if(array.length<2){return true;}
         else {
             for(int i=0;i<array.length-1;i++){
                 if(array[i]<=array[i+1]){return false; }
@@ -92,15 +95,17 @@ if(min>array[i]){min=array[i];}
         }
     }
     public boolean find(int[]array, int value){
-        for(int i=0;i<array.length;i++){
-            if(array[i]==value){return true;}
+        for (int i : array) {
+            if (i == value) {
+                return true;
+            }
         }
         return false;
     }
     public void reverse(int[]array){
 
             for(int i=0;i<(array.length/2);i++){
-                int cash = 0;
+                int cash;
                 cash=array[i];
                 array[i]=array[array.length-1-i];
                 array[array.length-1-i]=cash;
@@ -109,8 +114,7 @@ if(min>array[i]){min=array[i];}
 
     }
     public boolean isPalindrome(int[]array){
-        if(array.length==0){return true;}
-        if(array.length==1){return true;}
+        if(array.length<2){return true;}
 
         for(int i =0;i<(array.length/2);i++){
             if(array[i]!=array[array.length-1-i]){return false;}
@@ -120,9 +124,9 @@ if(min>array[i]){min=array[i];}
     }
     public int sum(int[][] matrix){
         int sum = 0;
-        for(int i = 0;i<matrix.length;i++){
-            for (int j = 0; j<matrix[i].length;j++){
-              sum+=matrix[i][j];
+        for (int[] matrixLine : matrix) {
+            for (int matrixLineValue : matrixLine) {
+                sum += matrixLineValue;
             }
         }
         return sum;
@@ -130,9 +134,11 @@ if(min>array[i]){min=array[i];}
     public int max(int[][] matrix){
 
         int max = Integer.MIN_VALUE;
-        for(int i = 0;i<matrix.length;i++){
-            for (int j = 0; j<matrix[i].length;j++){
-                if(max<matrix[i][j]){max=matrix[i][j];}
+        for (int[] matrixLine : matrix) {
+            for (int matrixLineValue : matrixLine) {
+                if (max < matrixLineValue) {
+                    max = matrixLineValue;
+                }
             }
         }
         return max;
@@ -145,9 +151,11 @@ if(min>array[i]){min=array[i];}
         return max;
     }
     public boolean isSortedDescendant(int[][] matrix){
-for(int i=0;i<matrix.length;i++){
-   if(!isSortedDescendant(matrix[i])){return false;}
-}
+        for (int[] i : matrix) {
+            if (!isSortedDescendant(i)) {
+                return false;
+            }
+        }
         return true;
     }
 

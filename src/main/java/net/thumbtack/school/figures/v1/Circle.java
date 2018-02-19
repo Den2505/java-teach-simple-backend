@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.pow;
 
 public class Circle {
     private Point2D center;
@@ -48,9 +49,7 @@ public class Circle {
         return 2*PI*radius;
     }
     public boolean isInside(int x, int y){
-        int dx = abs(center.getX())-abs(x);
-        int dy = abs(center.getY())-abs(y);
-        return radius>=dx & radius>=dy;
+       return (pow((x-center.getX()),2)+pow((y-center.getY()),2))<=pow(radius,2);
     }
     public boolean isInside(Point2D point){
         return isInside(point.getX(),point.getY());

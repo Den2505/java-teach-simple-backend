@@ -11,7 +11,6 @@ public class Triangle {
     private Point2D point1;
     private Point2D point2;
     private Point2D point3;
-    private static final double DOUBLE_EPS = 1E-6;
 public Triangle(Point2D point1,Point2D point2,Point2D point3){
     this.point1 = point1;
     this.point2 = point2;
@@ -65,13 +64,13 @@ public Triangle(Point2D point1,Point2D point2,Point2D point3){
     public double getPerimeter(){
         return getSide12()+getSide13()+getSide23();
     }
+    private int signSearch(Point2D point1,Point2D point2, int x ,int y){
+        return (point1.getX()-x)*(point2.getY()-point1.getY()) - (point2.getX()-point1.getX())*(point1.getY()-y);
+    }
     public boolean isInside(int x, int y){
-        Triangle triangle1 = new Triangle(point1,point2,new Point2D(x,y));
-        Triangle triangle2 = new Triangle(point1,new Point2D(x,y),point3);
-        Triangle triangle3 = new Triangle(new Point2D(x,y),point2,point3);
 
-        return abs(this.getArea()- (triangle1.getArea()+triangle2.getArea()+triangle3.getArea()))<= DOUBLE_EPS;
-
+       return (signSearch(point1,point2,x,y)<=0 & signSearch(point2,point3,x,y)<=0 & signSearch(point3,point1,x,y)<=0 )
+               || (signSearch(point1,point2,x,y)>=0 & signSearch(point2,point3,x,y)>=0 & signSearch(point3,point1,x,y)>=0);
     }
     public boolean isInside(Point2D point){
     return isInside(point.getX(),point.getY());

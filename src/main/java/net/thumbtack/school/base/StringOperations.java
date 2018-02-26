@@ -5,15 +5,15 @@ package net.thumbtack.school.base;
 
 
 public class StringOperations {
-    //В видио лекции к заданию лектор уделяет внимание нецелесообразности использования
-    // выражения String+=part врнутри цикла for each(ненужное использование памяти),
-    //но разве сам цикл for each не создает экземпляры классов, которые остаются без ссылок?
+    //Спасибо:)
+
     public static int getSummaryLength(String[] strings){
-        StringBuilder builder = new StringBuilder();
+
+        int length=0;
          for(String part: strings){
-         builder.append(part);
+         length+=part.length();
          }
-         return builder.length();
+         return length;
     }
 
     public static String getFirstAndLastLetterString(String string){
@@ -72,15 +72,18 @@ public class StringOperations {
         for(int i =0; i<string1.length() & i<string2.length();i++){
             if(string1.substring(0,i).equals(string2.substring(0,i))){n=i;}
         }
-       if(string1.substring(0,n+1).equals(string2.substring(0,n+1))){return string1.substring(0,n+1);}
+        if(string1.substring(0,n+1).equals(string2.substring(0,n+1))){return string1.substring(0,n+1);}
         return string1.substring(0,n);
+
 
     }
 
     public static boolean isPalindrome(String string){
         StringBuilder sb = new StringBuilder();
-        sb.append(string);
-        return sb.reverse().toString().equals(string);
+        for(int i=string.length()-1;i>=0;i--){
+            sb.append(string.charAt(i));
+        }
+        return sb.toString().equals(string);
     }
     public static boolean isPalindromeIgnoreCase(String string){
         StringBuilder sb = new StringBuilder();
@@ -103,7 +106,7 @@ public class StringOperations {
     }
     public static boolean hasSameSubstring(String string1, String string2, int index, int length){
         if(string1.length()<index+length||string2.length()<index+length){return false;}
-        return string1.substring(index,index+length).equals(string2.substring(index,index+length));
+        return string1.regionMatches(index,string2,index,length);
     }
 
     public static boolean isEqualAfterReplaceCharacters
@@ -123,34 +126,34 @@ public class StringOperations {
     }
     public static String makeCsvStringFromInts(int[] array){
 
-        if (array.length==0) return "";
 
+        return makeCsvStringBuilderFromInts(array).toString();
+
+    }
+    public static String makeCsvStringFromDoubles(double[] array){
+        return makeCsvStringBuilderFromDoubles(array).toString();
+        }
+    public static StringBuilder makeCsvStringBuilderFromInts(int[] array){
         StringBuilder builder = new StringBuilder();
+
+        if (array.length==0) return builder;
         for(int value:array){
             builder.append(String.valueOf(value));
             builder.append(",");
         }
         builder.deleteCharAt((builder.length()-1));
-        return builder.toString();
-
+        return builder;
     }
-    public static String makeCsvStringFromDoubles(double[] array){
-        if (array.length==0) return "";
-
-StringBuilder builder = new StringBuilder();
+    public static StringBuilder makeCsvStringBuilderFromDoubles(double[] array){
+        StringBuilder builder = new StringBuilder();
+        if (array.length==0) return builder;
 
         for(double value:array){
-           builder.append(String.format("%.2f", value));
+            builder.append(String.format("%.2f", value));
             builder.append(",");
         }
         builder.deleteCharAt((builder.length()-1));
-return builder.toString();
-        }
-    public static StringBuilder makeCsvStringBuilderFromInts(int[] array){
-        return new StringBuilder().append(makeCsvStringFromInts(array));
-    }
-    public static StringBuilder makeCsvStringBuilderFromDoubles(double[] array){
-        return new StringBuilder().append(makeCsvStringFromDoubles(array));
+        return builder;
     }
     public static StringBuilder removeCharacters(String string, int[] positions){
         StringBuilder sb = new StringBuilder();

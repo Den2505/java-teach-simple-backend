@@ -79,12 +79,18 @@ public class StringOperations {
     }
 
     public static boolean isPalindrome(String string){
-        StringBuilder sb = new StringBuilder();
-        for(int i=string.length()-1;i>=0;i--){
-            sb.append(string.charAt(i));
+        if(string.length()<=1){return  true;}
+        int length = 0;
+        if(string.length()%2==0){length=(string.length()/2)+1;}
+        else length = string.length()/2;
+        for(int i =0;i<length; i++){
+            if(string.charAt(i)!=string.charAt(string.length()-1-i)){return false;}
         }
-        return sb.toString().equals(string);
-    }
+
+        return true;
+}
+
+
     public static boolean isPalindromeIgnoreCase(String string){
         StringBuilder sb = new StringBuilder();
         sb.append(string);

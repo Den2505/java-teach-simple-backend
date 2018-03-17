@@ -19,7 +19,7 @@ public class Triangle extends Figure {
         this.point1 = point1;
         this.point2 = point2;
         this.point3 = point3;
-        super.setColor(Color.colorFromString(color));
+        super.setColor(color);
     }
     public Triangle(Point2D point1, Point2D point2, Point2D point3, Color color) throws ColorException {
         this(point1,point2,point3,Color.toString(color));

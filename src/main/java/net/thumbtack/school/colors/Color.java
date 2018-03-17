@@ -22,4 +22,5 @@ public enum Color {
             return String.valueOf(color);}
 
     }
+
 }

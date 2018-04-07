@@ -47,22 +47,17 @@ public class Group {
     }
 
     public void removeTrainee(Trainee trainee) throws TrainingException {
-        if (!trainees.contains(trainee)) {
+        if (!trainees.remove(trainee)) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         }
-        trainees.remove(trainee);
+
     }
 
     public void removeTrainee(int index) throws TrainingException {
-       try {
-           trainees.remove(index);
-       }
-       catch (IndexOutOfBoundsException e){
-           throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
-       }
-
-
-
+        if (trainees.size() - 1 < index) {
+            throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
+        }
+        trainees.remove(index);
     }
 
     public Trainee getTraineeByFirstName(String firstName) throws TrainingException {
@@ -110,20 +105,25 @@ public class Group {
         if (trainees.isEmpty()) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         }
-        sortTraineeListByRatingDescendant();
-        int t = trainees.get(0).getRating();
-        List<Trainee> list = new ArrayList<>();
+
+        List<Trainee> traineesMaxRait = new ArrayList<>();
+        int tempRait = 0;
         for (Trainee trainee : trainees) {
-            if (trainee.getRating() == t) {
-                list.add(trainee);
+            if (tempRait < trainee.getRating()) {
+                tempRait = trainee.getRating();
+                traineesMaxRait.clear();
+            }
+            if (tempRait == trainee.getRating()) {
+                traineesMaxRait.add(trainee);
             }
         }
-        return list;
+        return traineesMaxRait;
     }
-    public boolean  hasDuplicates(){
-      Set<Trainee> set = new HashSet<>();
-      set.addAll(trainees);
-      return set.size() != trainees.size();
+
+    public boolean hasDuplicates() {
+        Set<Trainee> set = new HashSet<>();
+        set.addAll(trainees);
+        return set.size() != trainees.size();
     }
 
     @Override

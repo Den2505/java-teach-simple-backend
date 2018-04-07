@@ -12,30 +12,27 @@ public class MatrixNonSimilarRows {
     }
 
     public Set<int[]> getNonSimilarRows() {
-        List<Integer[]> integersMas = new ArrayList<>();
-        Set<Integer> integerHashSet = new HashSet<>();
-        for (int i = 0; i < arrayList.size(); i++) {
-            for (int j = 0; arrayList.get(i).length > j; j++) {
-                integerHashSet.add(arrayList.get(i)[j]);
-            }
-            integersMas.add(integerHashSet.toArray(new Integer[integerHashSet.size()]));
-            integerHashSet.clear();
-        }
-        List<Integer> indexList = new ArrayList<>();
-        for (int i = 0; i < integersMas.size(); i++) {
-            for (int j = i + 1; j < integersMas.size(); j++) {
-                if (Arrays.equals(integersMas.get(i), integersMas.get(j))) {
-                    indexList.add(j);
+
+        Set<int[]> set2 = new TreeSet<>(new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                Set<Integer> integerSet = new HashSet<>();
+                Set<Integer> integerSet2 = new HashSet<>();
+                for (int elem : o1) {
+                    integerSet.add(elem);
                 }
+                for(int elem:o2){
+                    integerSet2.add(elem);
+                }
+                if(integerSet.equals(integerSet2))
+                    return 0;
+                else if(integerSet.size() == integerSet2.size()) return 1;
+                else
+                    return integerSet.size() - integerSet2.size();
             }
-        }
-        //integerHashSet.clear();
-        List<int[]> removePattern = new ArrayList<>();
-        for (int i : indexList) {
-            removePattern.add(arrayList.get(i));
-        }
-        arrayList.removeAll(removePattern);
-        return new HashSet<>(arrayList);
+        });
+        set2.addAll(arrayList);
+        return set2;
     }
 
 }

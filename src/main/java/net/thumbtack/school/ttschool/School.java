@@ -46,16 +46,21 @@ public class School {
     }
 
     public void removeGroup(Group group) throws TrainingException {
-      removeGroup(group.getName());
+        removeGroup(group.getName());
     }
 
     public void removeGroup(String name) throws TrainingException {
-
-        Group group = new Group(name, "room");
-        if (!groups.contains(group)) {
+        boolean exception = true;
+        for (Group elem : groups) {
+            if (elem.getName().equals(name)) {
+                groups.remove(elem);
+                exception=false;
+                break;
+            }
+        }
+        if (exception) {
             throw new TrainingException(TrainingErrorCode.GROUP_NOT_FOUND);
         }
-        groups.remove(group);
     }
 
     public boolean containsGroup(Group group) {

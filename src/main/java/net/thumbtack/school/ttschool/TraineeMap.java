@@ -23,10 +23,9 @@ public class TraineeMap {
     }
 
     public void removeTraineeInfo(Trainee trainee) throws TrainingException {
-        if (!traineeInfo.containsKey(trainee)) {
+        if (traineeInfo.remove(trainee) == null) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         }
-        traineeInfo.remove(trainee);
 
     }
 
@@ -35,20 +34,23 @@ public class TraineeMap {
     }
 
     public String getInstituteByTrainee(Trainee trainee) throws TrainingException {
-        if (!traineeInfo.containsKey(trainee)) {
+        String traineeInstitute = traineeInfo.get(trainee);
+        if (traineeInstitute == null) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
-        }
-        return traineeInfo.get(trainee);
+        } else
+            return traineeInstitute;
     }
-    public Set<Trainee> getAllTrainees(){
+
+    public Set<Trainee> getAllTrainees() {
         return traineeInfo.keySet();
     }
-    public Set<String> getAllInstitutes(){
 
+    public Set<String> getAllInstitutes() {
 
-      return new HashSet<String>(traineeInfo.values());
+        return new HashSet<String>(traineeInfo.values());
     }
-    public boolean isAnyFromInstitute(String institute){
+
+    public boolean isAnyFromInstitute(String institute) {
         Set<String> set = getAllInstitutes();
         return set.contains(institute);
     }

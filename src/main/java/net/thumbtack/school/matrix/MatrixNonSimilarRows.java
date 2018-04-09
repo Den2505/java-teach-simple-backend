@@ -11,22 +11,33 @@ public class MatrixNonSimilarRows {
         }
     }
 
-    public Set<int[]> getNonSimilarRows() {
+    private int setCompareTo(Set<Integer> integerSet, Set<Integer> integerSet2) {
+        Iterator<Integer> iterator = integerSet.iterator();
+        Iterator<Integer> iterator2 = integerSet2.iterator();
+        int a, b;
+        while (iterator.hasNext()) {
+                a = iterator.next();
+                b = iterator2.next();
+                if (a != b) return Integer.compare(a, b);
+            }
+        return 0;
+    }
 
+    public Set<int[]> getNonSimilarRows() {
         Set<int[]> set2 = new TreeSet<>(new Comparator<int[]>() {
             @Override
             public int compare(int[] o1, int[] o2) {
-                Set<Integer> integerSet = new HashSet<>();
-                Set<Integer> integerSet2 = new HashSet<>();
+                Set<Integer> integerSet = new TreeSet<>();
+                Set<Integer> integerSet2 = new TreeSet<>();
                 for (int elem : o1) {
                     integerSet.add(elem);
                 }
-                for(int elem:o2){
+                for (int elem : o2) {
                     integerSet2.add(elem);
                 }
-                if(integerSet.equals(integerSet2))
+                if (integerSet.equals(integerSet2))
                     return 0;
-                else if(integerSet.size() == integerSet2.size()) return 1;
+                else if (integerSet.size() == integerSet2.size()) return setCompareTo(integerSet, integerSet2);
                 else
                     return integerSet.size() - integerSet2.size();
             }

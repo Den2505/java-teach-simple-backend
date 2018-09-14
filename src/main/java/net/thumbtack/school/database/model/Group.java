@@ -10,9 +10,9 @@ public class Group {
     private String room;
     private List<Trainee> trainees;
     private List<Subject> subjects;
-    private int schoolId;
 
-    public Group() { }
+    public Group() {
+    }
 
     public Group(int id, String name, String room, List<Trainee> trainees, List<Subject> subjects) {
         this.setId(id);
@@ -38,19 +38,19 @@ public class Group {
         this.setSubjects(Collections.emptyList());
     }
 
-    public void addTrainee(Trainee trainee){
+    public void addTrainee(Trainee trainee) {
         this.trainees.add(trainee);
     }
 
-    public void removeTrainee(Trainee trainee){
+    public void removeTrainee(Trainee trainee) {
         this.trainees.remove(trainee);
     }
 
-    public void addSubject(Subject subject){
+    public void addSubject(Subject subject) {
         this.subjects.add(subject);
     }
 
-    public void removeSubject(Subject subject){
+    public void removeSubject(Subject subject) {
         this.subjects.remove(subject);
     }
 
@@ -113,14 +113,6 @@ public class Group {
         return Objects.hash(id, name, room, trainees, subjects);
     }
 
-    public int getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(int schoolId) {
-        this.schoolId = schoolId;
-    }
-
     @Override
     public String toString() {
         return "Group{" +
@@ -129,7 +121,6 @@ public class Group {
                 ", room='" + room + '\'' +
                 ", trainees=" + trainees +
                 ", subjects=" + subjects +
-                ", schoolId=" + schoolId +
                 '}';
     }
 }

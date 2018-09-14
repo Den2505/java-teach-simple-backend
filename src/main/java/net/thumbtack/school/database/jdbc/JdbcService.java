@@ -12,25 +12,33 @@ import java.util.List;
 
 public class JdbcService {
 
+    // Добавляет Trainee в базу данных.
 
     public static void insertTrainee(Trainee trainee) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `trainee`(id,firstName,lastName,rating) VALUES (?,?,?,?)");) {
-            preparedStatement.setInt(1, trainee.getId());
-            preparedStatement.setString(2, trainee.getFirstName());
-            preparedStatement.setString(3, trainee.getLastName());
-            preparedStatement.setInt(4, trainee.getRating());
+        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `trainee`" +
+                "(firstName,lastName,rating) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
+            // preparedStatement.setInt(1, trainee.getId());
+            preparedStatement.setString(1, trainee.getFirstName());
+            preparedStatement.setString(2, trainee.getLastName());
+            preparedStatement.setInt(3, trainee.getRating());
             preparedStatement.executeUpdate();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                trainee.setId(resultSet.getInt(1));
+                resultSet.close();
+            }
         }
     }
-    // Добавляет Trainee в базу данных.
+    //Изменяет ранее записанный Trainee в базе данных. В случае ошибки выбрасывает SQLException.
 
     public static void updateTrainee(Trainee trainee) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE `trainee` SET firstName = ?, lastName = ?, rating = ? where id = ?")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE `trainee` SET firstName = ?, lastName = ?, rating = ? where id = ?")) {
             preparedStatement.setString(1, trainee.getFirstName());
             preparedStatement.setString(2, trainee.getLastName());
             preparedStatement.setInt(3, trainee.getRating());
@@ -38,7 +46,6 @@ public class JdbcService {
             preparedStatement.executeUpdate();
         }
     }
-    //Изменяет ранее записанный Trainee в базе данных. В случае ошибки выбрасывает SQLException.
 
     private static Trainee getTraineeByResultSet(ResultSet set, String parameter) throws SQLException {
         Trainee trainee = new Trainee();
@@ -58,31 +65,33 @@ public class JdbcService {
 
         return trainee;
     }
+    // Получает Trainee  из базы данных по его ID, используя метод получения “по именам полей”. Если Trainee с таким ID нет, возвращает null.
 
     public static Trainee getTraineeByIdUsingColNames(int traineeId) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from `trainee` where id = " + traineeId);
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * from `trainee` where id = " + traineeId);
         ResultSet resultSet = preparedStatement.executeQuery();
         boolean exist = resultSet.first();
         return exist ? getTraineeByResultSet(resultSet, "names") : null;
     }
-    // Получает Trainee  из базы данных по его ID, используя метод получения “по именам полей”. Если Trainee с таким ID нет, возвращает null.
+    // Получает Trainee  из базы данных по его ID, используя метод получения “по номерам полей”. Если Trainee с таким ID нет, возвращает null.
 
     public static Trainee getTraineeByIdUsingColNumbers(int traineeId) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from `trainee` where id = " + traineeId);
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * from `trainee` where id = " + traineeId);
         ResultSet resultSet = preparedStatement.executeQuery();
         boolean exist = resultSet.first();
         return exist ? getTraineeByResultSet(resultSet, "numbers") : null;
     }
-    // Получает Trainee  из базы данных по его ID, используя метод получения “по номерам полей”. Если Trainee с таким ID нет, возвращает null.
+    // Получает все Trainee  из базы данных, используя метод получения “по именам полей”. Если ни одного Trainee в БД нет,  возвращает пустой список.
 
     public static List<Trainee> getTraineesUsingColNames() throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        Statement statement = connection.createStatement();
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from `trainee`");
         ResultSet resultSet = preparedStatement.executeQuery();
         List<Trainee> trainees = new ArrayList<>();
@@ -91,12 +100,11 @@ public class JdbcService {
         }
         return trainees;
     }
-    // Получает все Trainee  из базы данных, используя метод получения “по именам полей”. Если ни одного Trainee в БД нет,  возвращает пустой список.
+    //  Получает все Trainee  из базы данных, используя метод получения “по номерам полей”. Если ни одного Trainee в БД нет,  возвращает пустой список.
 
     public static List<Trainee> getTraineesUsingColNumbers() throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        Statement statement = connection.createStatement();
         PreparedStatement preparedStatement = connection.prepareStatement("Select * from `trainee`");
         ResultSet resultSet = preparedStatement.executeQuery();
         List<Trainee> trainees = new ArrayList<>();
@@ -105,16 +113,18 @@ public class JdbcService {
         }
         return trainees;
     }
-    //  Получает все Trainee  из базы данных, используя метод получения “по номерам полей”. Если ни одного Trainee в БД нет,  возвращает пустой список.
 
+    // Удаляет Trainee из базы данных.
 
     public static void deleteTrainee(Trainee trainee) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM `trainee` where `id` =" + trainee.getId());
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "DELETE FROM `trainee` where `id` =" + trainee.getId());
         preparedStatement.executeUpdate();
     }
-    // Удаляет Trainee из базы данных.
+
+    // Удаляет все Trainee из базы данных
 
     public static void deleteTrainees() throws SQLException {
         JdbcUtils.createConnection();
@@ -123,18 +133,22 @@ public class JdbcService {
         preparedStatement.executeUpdate();
 
     }
-    // Удаляет все Trainee из базы данных
+
+    //  Добавляет Subject в базу данных
 
     public static void insertSubject(Subject subject) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `subject`(id,name) VALUES (?,?)");) {
-            preparedStatement.setInt(1, subject.getId());
-            preparedStatement.setString(2, subject.getName());
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO `subject`(name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+            //preparedStatement.setInt(1, subject.getId());
+            preparedStatement.setString(1, subject.getName());
             preparedStatement.executeUpdate();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next())
+                subject.setId(resultSet.getInt(1));
         }
     }
-    //  Добавляет Subject в базу данных
 
     private static Subject getSubjectFromResultSet(ResultSet resultSet, String parameter) throws SQLException {
         Subject subject = new Subject();
@@ -150,27 +164,33 @@ public class JdbcService {
         return subject;
     }
 
+    //  Получает Subject  из базы данных по его ID, используя метод получения “по именам полей”. Если Subject с таким ID нет, возвращает null.
+
     public static Subject getSubjectByIdUsingColNames(int subjectId) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("Select * from `subject` where id = " + subjectId)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "Select * from `subject` where id = " + subjectId)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean exist = resultSet.first();
             return exist ? getSubjectFromResultSet(resultSet, "names") : null;
         }
     }
-    //  Получает Subject  из базы данных по его ID, используя метод получения “по именам полей”. Если Subject с таким ID нет, возвращает null.
+
+    //  Получает Subject  из базы данных по его ID, используя метод получения “по номерам полей”. Если Subject с таким ID нет, возвращает null.
 
     public static Subject getSubjectByIdUsingColNumbers(int subjectId) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("Select * from `subject` where id = " + subjectId)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "Select * from `subject` where id = " + subjectId)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean exist = resultSet.first();
             return exist ? getSubjectFromResultSet(resultSet, "numbers") : null;
         }
     }
-    //  Получает Subject  из базы данных по его ID, используя метод получения “по номерам полей”. Если Subject с таким ID нет, возвращает null.
+
+    // Удаляет все Subject из базы данных.
 
     public static void deleteSubjects() throws SQLException {
         JdbcUtils.createConnection();
@@ -181,23 +201,27 @@ public class JdbcService {
         }
 
     }
-    // Удаляет все Subject из базы данных.
+
+    // Добавляет School в базу данных
 
     public static void insertSchool(School school) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `school`(id,name,year) VALUES (?,?,?)");) {
-            preparedStatement.setInt(1, school.getId());
-            preparedStatement.setString(2, school.getName());
-            preparedStatement.setInt(3, school.getYear());
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO `school`(name,year) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);) {
+            // preparedStatement.setInt(1, school.getId());
+            preparedStatement.setString(1, school.getName());
+            preparedStatement.setInt(2, school.getYear());
             preparedStatement.executeUpdate();
             for (Group elem : school.getGroups()) {
                 insertGroup(school, elem);
             }
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next())
+                school.setId(resultSet.getInt(1));
         }
     }
 
-    // Добавляет School в базу данных
 
     private static School getSchoolByResultSet(ResultSet resultSet, String parameter) throws SQLException {
         School school = new School();
@@ -217,29 +241,35 @@ public class JdbcService {
         return school;
     }
 
+    // Получает School  из базы данных по ее ID, используя метод получения “по именам полей”.
+    // Если School с таким ID нет, возвращает null.
+
     public static School getSchoolByIdUsingColNames(int schoolId) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from `school` where `id` =" + schoolId)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * from `school` where `id` =" + schoolId)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean exist = resultSet.first();
             return exist ? getSchoolByResultSet(resultSet, "names") : null;
         }
 
     }
-    // Получает School  из базы данных по ее ID, используя метод получения “по именам полей”. Если School с таким ID нет, возвращает null.
+
+    // Получает School  из базы данных по ее ID, используя метод получения “по номерам полей”.
+    // Если School с таким ID нет, возвращает null.
 
     public static School getSchoolByIdUsingColNumbers(int schoolId) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from `school` where `id` =" + schoolId)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * from `school` where `id` =" + schoolId)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean exist = resultSet.first();
             return exist ? getSchoolByResultSet(resultSet, "numbers") : null;
         }
 
     }
-    // Получает School  из базы данных по ее ID, используя метод получения “по номерам полей”. Если School с таким ID нет, возвращает null.
 
     public static void deleteSchools() throws SQLException {
         JdbcUtils.createConnection();
@@ -248,41 +278,41 @@ public class JdbcService {
             preparedStatement.executeUpdate();
         }
     }
-    // Удаляет все School из базы данных. Если список Group в School не пуст, удаляет все Group для каждой School.
+
+    // Добавляет Group в базу данных, устанавливая ее принадлежность к школе School.
 
     public static void insertGroup(School school, Group group) throws SQLException {
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `group`(id,name,room,school_id) VALUES(?,?,?,?) ")) {
-            preparedStatement.setInt(1, group.getId());
-            preparedStatement.setString(2, group.getName());
-            preparedStatement.setString(3, group.getRoom());
-            preparedStatement.setInt(4, school.getId());
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO `group`(name,room,school_id) VALUES(?,?,?) ", Statement.RETURN_GENERATED_KEYS)) {
+            //preparedStatement.setInt(1, group.getId());
+            preparedStatement.setString(1, group.getName());
+            preparedStatement.setString(2, group.getRoom());
+            preparedStatement.setInt(3, school.getId());
             preparedStatement.executeUpdate();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next())
+                group.setId(resultSet.getInt(1));
         }
     }
-    // Добавляет Group в базу данных, устанавливая ее принадлежность к школе School.
 
     private static Group getGroupByResultSet(ResultSet resultSet) throws SQLException {
-      //  int id = resultSet.getInt("id");
-      //  String name = resultSet.getString("name");
-       // String room = resultSet.getString("room");
-       // int schoolId = resultSet.getInt("school_id");
         Group group = new Group();
         group.setId(resultSet.getInt("id"));
         group.setName(resultSet.getString("name"));
         group.setRoom(resultSet.getString("room"));
-        group.setSchoolId(resultSet.getInt("school_id"));
-        group.setTrainees(Collections.EMPTY_LIST);
-        group.setSubjects(Collections.EMPTY_LIST);
+        group.setTrainees(new ArrayList<>());
+        group.setSubjects(new ArrayList<>());
         return group;
     }
 
-    private static List<Group>  getGroupsBySchoolId(int schoolId) throws SQLException {
+    private static List<Group> getGroupsBySchoolId(int schoolId) throws SQLException {
         List<Group> groups = new ArrayList<>();
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from `group` where `school_id` = " + schoolId)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * from `group` where `school_id` = " + schoolId)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 groups.add(getGroupByResultSet(resultSet));
@@ -291,40 +321,61 @@ public class JdbcService {
         return groups;
     }
 
-    private static School getSchoolAndGroupsByResultSet(ResultSet resultSet) throws SQLException {
+    private static List<School> getSchoolAndGroupsByResultSet(ResultSet resultSet) throws SQLException {
         School school = new School();
-        school.setId(resultSet.getInt("id"));
-        school.setName(resultSet.getString("name"));
-        school.setYear(resultSet.getInt("year"));
-        school.setGroups(getGroupsBySchoolId(resultSet.getInt("id")));
-        return school;
+        List<School> schools = new ArrayList<>();
+        do {
+            if (school.getId() != resultSet.getInt("id")) {
+                school = new School();
+                school.setId(resultSet.getInt("id"));
+                school.setName(resultSet.getString("name"));
+                school.setYear(resultSet.getInt("year"));
+                schools.add(school);
+            }
+            Group group = new Group();
+            group.setId(resultSet.getInt("group_id"));
+            group.setName(resultSet.getString("group_name"));
+            group.setRoom(resultSet.getString("room"));
+            group.setSubjects(new ArrayList<>());
+            group.setTrainees(new ArrayList<>());
+            school.addGroup(group);
+        } while (resultSet.next());
+        return schools;
     }
+
+    // Получает School по ее ID вместе со всеми ее Group из базы данных.
+    // Если School с таким ID нет, возвращает null.
+    // Метод получения (по именам или номерам полей) - на Ваше усмотрение.
 
     public static School getSchoolByIdWithGroups(int id) throws SQLException {
         School school = new School();
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `school` where `id` = "+id)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "select * from `school` left join " +
+                        "(select `id` as `group_id`, `name` as `group_name`, `room`, `school_id` from `group`) " +
+                        "as q ON school.id = q.school_id  where `id` = " + id)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean exist = resultSet.first();
-            return exist ? getSchoolAndGroupsByResultSet(resultSet): null;
+            return exist ? getSchoolAndGroupsByResultSet(resultSet).get(0) : null;
         }
     }
-    // Получает School по ее ID вместе со всеми ее Group из базы данных. Если School с таким ID нет, возвращает null. Метод получения (по именам или номерам полей) - на Ваше усмотрение.
+
+    //Получает список всех School вместе со всеми их Group из базы данных.
+    // Если ни одной  School в БД нет,  возвращает пустой список.
+    // Метод получения (по именам или номерам полей) - на Ваше усмотрение.
 
     public static List<School> getSchoolsWithGroups() throws SQLException {
         List<School> schools = new ArrayList<>();
         JdbcUtils.createConnection();
         Connection connection = JdbcUtils.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `school`")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("select * from `school` left join " +
+                "(select `id` as `group_id`, `name` as `group_name`, `room`, `school_id` from `group`) " +
+                "as q ON school.id = q.school_id")) {
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next())
-            {
-                schools.add(getSchoolAndGroupsByResultSet(resultSet));
-            }
+            boolean exist = resultSet.first();
+            return exist ? getSchoolAndGroupsByResultSet(resultSet) : schools;
+        }
     }
-        return schools;
-    }
-    //Получает список всех School вместе со всеми их Group из базы данных. Если ни одной  School в БД нет,  возвращает пустой список. Метод получения (по именам или номерам полей) - на Ваше усмотрение.
 
 }

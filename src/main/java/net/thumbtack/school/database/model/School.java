@@ -1,5 +1,6 @@
 package net.thumbtack.school.database.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -8,7 +9,7 @@ public class School {
     private int id;
     private String name;
     private int year;
-    private List<Group> groups;
+    private List<Group> groups = new ArrayList<>();
 
     public School() {
 

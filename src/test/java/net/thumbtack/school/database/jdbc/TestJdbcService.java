@@ -132,18 +132,18 @@ public class TestJdbcService {
 
     @Test
     public void testInsertTwoSchoolsAndGroups() throws SQLException {
-        School school2018 = new School(1,"TTSchool2018", 2018);
+        School school2018 = new School("TTSchool2018", 2018);
         JdbcService.insertSchool(school2018);
-        School school2019 = new School(2,"TTSchool2019", 2019);
+        School school2019 = new School("TTSchool2019", 2019);
         JdbcService.insertSchool(school2019);
         School school2018FromDBByColNames = JdbcService.getSchoolByIdUsingColNames(school2018.getId());
         assertEquals(school2018, school2018FromDBByColNames);
         School school2019FromDBByColNames = JdbcService.getSchoolByIdUsingColNames(school2019.getId());
         assertEquals(school2019, school2019FromDBByColNames);
-        Group group2018FrontEnd = new Group(1,"Frontend2018", "11");
-        Group group2018BackEnd = new Group(2,"Backend2018", "12");
-        Group group2019FrontEnd = new Group(3,"Frontend2019", "11");
-        Group group2019BackEnd = new Group(4,"Backend2019", "12");
+        Group group2018FrontEnd = new Group("Frontend2018", "11");
+        Group group2018BackEnd = new Group("Backend2018", "12");
+        Group group2019FrontEnd = new Group("Frontend2019", "11");
+        Group group2019BackEnd = new Group("Backend2019", "12");
         JdbcService.insertGroup(school2018, group2018FrontEnd);
         JdbcService.insertGroup(school2018, group2018BackEnd);
         JdbcService.insertGroup(school2019, group2019FrontEnd);

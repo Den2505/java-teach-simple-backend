@@ -29,6 +29,7 @@ public class JdbcService {
                 trainee.setId(resultSet.getInt(1));
                 resultSet.close();
             }
+            resultSet.close();
         }
     }
     //Изменяет ранее записанный Trainee в базе данных. В случае ошибки выбрасывает SQLException.
@@ -62,7 +63,6 @@ public class JdbcService {
             trainee.setLastName(set.getString(3));
             trainee.setRating(set.getInt(4));
         }
-
         return trainee;
     }
     // Получает Trainee  из базы данных по его ID, используя метод получения “по именам полей”. Если Trainee с таким ID нет, возвращает null.
@@ -98,6 +98,7 @@ public class JdbcService {
         while (resultSet.next()) {
             trainees.add(getTraineeByResultSet(resultSet, "names"));
         }
+        resultSet.close();
         return trainees;
     }
     //  Получает все Trainee  из базы данных, используя метод получения “по номерам полей”. Если ни одного Trainee в БД нет,  возвращает пустой список.
@@ -147,6 +148,7 @@ public class JdbcService {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next())
                 subject.setId(resultSet.getInt(1));
+            resultSet.close();
         }
     }
 
@@ -160,7 +162,7 @@ public class JdbcService {
             subject.setId(resultSet.getInt(1));
             subject.setName(resultSet.getString(2));
         }
-
+        resultSet.close();
         return subject;
     }
 
@@ -219,6 +221,7 @@ public class JdbcService {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next())
                 school.setId(resultSet.getInt(1));
+            resultSet.close();
         }
     }
 
@@ -237,7 +240,7 @@ public class JdbcService {
             school.setYear(resultSet.getInt(3));
             school.setGroups(Collections.emptyList());
         }
-
+        resultSet.close();
         return school;
     }
 
@@ -294,6 +297,7 @@ public class JdbcService {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next())
                 group.setId(resultSet.getInt(1));
+            resultSet.close();
         }
     }
 
@@ -304,6 +308,7 @@ public class JdbcService {
         group.setRoom(resultSet.getString("room"));
         group.setTrainees(new ArrayList<>());
         group.setSubjects(new ArrayList<>());
+        resultSet.close();
         return group;
     }
 
@@ -340,6 +345,7 @@ public class JdbcService {
             group.setTrainees(new ArrayList<>());
             school.addGroup(group);
         } while (resultSet.next());
+        resultSet.close();
         return schools;
     }
 
@@ -371,7 +377,7 @@ public class JdbcService {
         Connection connection = JdbcUtils.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement("select * from `school` left join " +
                 "(select `id` as `group_id`, `name` as `group_name`, `room`, `school_id` from `group`) " +
-                "as q ON school.id = q.school_id")) {
+                "as q ON school.id = q.school_id order by `id`")) {
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean exist = resultSet.first();
             return exist ? getSchoolAndGroupsByResultSet(resultSet) : schools;

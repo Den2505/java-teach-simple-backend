@@ -1,10 +1,13 @@
 package net.thumbtack.school.database.model;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Group {
+public class Group implements Comparable {
     private int id;
     private String name;
     private String room;
@@ -26,16 +29,16 @@ public class Group {
         this.setId(id);
         this.setName(name);
         this.setRoom(room);
-        this.setTrainees(Collections.emptyList());
-        this.setSubjects(Collections.emptyList());
+        this.setTrainees(new ArrayList<>());
+        this.setSubjects(new ArrayList<>());
     }
 
     public Group(String name, String room) {
         this.setId(0);
         this.setName(name);
         this.setRoom(room);
-        this.setTrainees(Collections.emptyList());
-        this.setSubjects(Collections.emptyList());
+        this.setTrainees(new ArrayList<>());
+        this.setSubjects(new ArrayList<>());
     }
 
     public void addTrainee(Trainee trainee) {
@@ -123,4 +126,11 @@ public class Group {
                 ", subjects=" + subjects +
                 '}';
     }
+
+    @Override
+    public int compareTo(@NotNull Object o) {
+        Group group = (Group)o;
+        return this.id - group.id;
+    }
+
 }

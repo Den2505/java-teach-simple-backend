@@ -26,14 +26,14 @@ public class School {
         this.setId(ig);
         this.setName(name);
         this.setYear(year);
-        this.setGroups(Collections.emptyList());
+        this.setGroups(new ArrayList<>());
     }
 
     public School(String name, int year) {
         this.setId(0);
         this.setName(name);
         this.setYear(year);
-        this.setGroups(Collections.emptyList());
+        this.setGroups(new ArrayList<>());
     }
 
     public int getId() {
@@ -81,6 +81,8 @@ public class School {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         School school = (School) o;
+        Collections.sort(groups);
+        Collections.sort(school.groups);
         return id == school.id &&
                 year == school.year &&
                 Objects.equals(name, school.name) &&
